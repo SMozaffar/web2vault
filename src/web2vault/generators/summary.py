@@ -25,7 +25,7 @@ class SummaryGenerator(NoteGenerator):
             "factual, standalone documentation.\n\n"
             "Output ONLY the markdown body (no YAML frontmatter, no top-level # title "
             "heading). Use [[wikilinks]] when referencing concepts that could be their own note."
-        )
+        ) + self._math_formatting_instructions() + self._vault_linking_instructions()
 
     def _user_prompt(self, content: str, title: str, url: str) -> str:
         return (

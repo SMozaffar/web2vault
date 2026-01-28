@@ -29,6 +29,7 @@ def run_all_generators(
     llm: LLMProvider,
     verbose: bool = False,
     output_name: Optional[str] = None,
+    vault_context: str = "",
 ) -> NoteBundle:
     """Run all generators and return a NoteBundle."""
     folder = output_name or derive_folder_name(scraped.title, scraped.url)
@@ -43,10 +44,10 @@ def run_all_generators(
     bundle.notes.append(_make_raw_note(scraped, display_name))
 
     generators = [
-        SummaryGenerator(llm),
-        DeepDiveGenerator(llm),
-        QAGenerator(llm),
-        PracticeGenerator(llm),
+        SummaryGenerator(llm, vault_context=vault_context),
+        DeepDiveGenerator(llm, vault_context=vault_context),
+        QAGenerator(llm, vault_context=vault_context),
+        PracticeGenerator(llm, vault_context=vault_context),
     ]
 
     label_map = {

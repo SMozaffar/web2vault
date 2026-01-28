@@ -9,6 +9,8 @@ from .crawler import crawl_url, scrape_url
 from .exceptions import ConfigError, CrawlError, Web2VaultError
 from .generators import run_all_generators
 from .llm import get_llm_provider
+from .utils import derive_folder_name
+from .vault_index import VaultIndex
 from .writer import write_bundle
 
 
@@ -89,6 +91,11 @@ def main(urls, provider, vault_path, crawl_depth, max_pages, output_name, model,
         click.echo(f"Failed to initialize LLM provider: {e}", err=True)
         sys.exit(2)
 
+    # Scan existing vault notes for cross-linking context
+    vault_index = VaultIndex.scan(config.vault_path)
+    if verbose and len(vault_index):
+        click.echo(f"Found {len(vault_index)} existing notes in vault")
+
     had_errors = False
     total_failure = True
 
@@ -120,10 +127,16 @@ def main(urls, provider, vault_path, crawl_depth, max_pages, output_name, model,
             had_errors = True
             continue
 
+        # Build vault context for cross-linking, excluding current output folder
+        current_folder = output_name or derive_folder_name(scraped.title, scraped.url)
+        filtered_index = VaultIndex.scan(config.vault_path, exclude_folder=current_folder)
+        vault_context = filtered_index.format_for_prompt()
+
         # Generate notes
         try:
             bundle = run_all_generators(
-                scraped, llm, verbose=verbose, output_name=output_name
+                scraped, llm, verbose=verbose, output_name=output_name,
+                vault_context=vault_context,
             )
         except Web2VaultError as e:
             click.echo(f"  Generation failed: {e}", err=True)

@@ -33,7 +33,7 @@ class DeepDiveGenerator(NoteGenerator):
             "Output ONLY the markdown body (no YAML frontmatter, "
             "no top-level # title heading). Use [[wikilinks]] for cross-references "
             "to concepts that could be their own note."
-        )
+        ) + self._math_formatting_instructions() + self._vault_linking_instructions()
 
     def _user_prompt(self, content: str, title: str, url: str) -> str:
         # Used as fallback for chunk-based generation
@@ -163,7 +163,7 @@ class DeepDiveGenerator(NoteGenerator):
             "- Be thorough — do not summarize or abbreviate\n"
             "- Output ONLY this section's content (keep the ## heading)\n"
             "- Do NOT include YAML frontmatter or a top-level # title heading"
-        )
+        ) + self._math_formatting_instructions() + self._vault_linking_instructions()
 
     def _expand_user_prompt(
         self,

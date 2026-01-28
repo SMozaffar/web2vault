@@ -30,7 +30,7 @@ class QAGenerator(NoteGenerator):
             "of the original source. Present information as factual documentation.\n\n"
             "Output ONLY the markdown body (no YAML frontmatter, no top-level # title "
             "heading). Use [[wikilinks]] in answers when referencing key concepts."
-        )
+        ) + self._math_formatting_instructions() + self._vault_linking_instructions()
 
     def _user_prompt(self, content: str, title: str, url: str) -> str:
         # Used as fallback for chunk-based generation
@@ -144,7 +144,7 @@ class QAGenerator(NoteGenerator):
             "- Use [[wikilinks]] for important concepts\n"
             "- Mix factual, conceptual, and analytical questions\n"
             "- Do NOT include YAML frontmatter or a top-level # title heading"
-        )
+        ) + self._math_formatting_instructions() + self._vault_linking_instructions()
 
     def _qa_section_user_prompt(
         self, content: str, title: str, url: str, topic: dict,

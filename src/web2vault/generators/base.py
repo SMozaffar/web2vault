@@ -8,7 +8,7 @@ import click
 from ..chunker import chunk_content, needs_chunking
 from ..llm.base import LLMProvider
 from ..models import GeneratedNote, ScrapedContent
-from ..utils import estimate_tokens
+from ..utils import estimate_tokens, slugify
 
 
 class NoteGenerator(ABC):
@@ -18,8 +18,36 @@ class NoteGenerator(ABC):
     Override _generate_body for multi-pass / prompt-chained strategies.
     """
 
-    def __init__(self, llm: LLMProvider):
+    def __init__(self, llm: LLMProvider, vault_context: str = ""):
         self._llm = llm
+        self._vault_context = vault_context
+
+    def _vault_linking_instructions(self) -> str:
+        """Return vault cross-linking instructions for system prompts.
+
+        When vault context is available, returns a block instructing the LLM
+        to link to existing notes using [[wikilinks]]. Returns empty string
+        if no vault context is set.
+        """
+        if not self._vault_context:
+            return ""
+        return (
+            "\n\nEXISTING VAULT NOTES — Link to these using [[Note Title]] where relevant:\n"
+            f"{self._vault_context}\n"
+            "Only link when genuinely relevant. Do not force connections."
+        )
+
+    def _math_formatting_instructions(self) -> str:
+        """Return Obsidian-compatible math formatting instructions."""
+        return (
+            "\n\nMATH FORMATTING: When including mathematical formulas, use "
+            "Obsidian-compatible LaTeX syntax:\n"
+            "- Inline math: $E = mc^2$\n"
+            "- Display math (block): $$\\int_0^\\infty e^{-x} dx = 1$$\n"
+            "- Always use display math ($$...$$) for standalone equations or "
+            "multi-line derivations.\n"
+            "- Never use \\( \\) or \\[ \\] delimiters — only $ and $$."
+        )
 
     @property
     @abstractmethod
@@ -98,7 +126,7 @@ class NoteGenerator(ABC):
             title=f"{name} - {note_type_label}",
             note_type=self.note_type,
             content=body,
-            tags=self._default_tags(),
+            tags=self._default_tags(name),
         )
 
     def _generate_body(
@@ -261,5 +289,10 @@ class NoteGenerator(ABC):
             truncated = truncated[:last_para]
         return truncated + "\n\n[Content truncated to fit context window]"
 
-    def _default_tags(self) -> list[str]:
-        return ["web2vault", self.note_type]
+    def _default_tags(self, subject: str = "") -> list[str]:
+        tags = ["web2vault", self.note_type]
+        if subject:
+            tag = slugify(subject, max_length=50)
+            if tag and tag != "untitled":
+                tags.append(tag)
+        return tags

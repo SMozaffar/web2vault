@@ -31,7 +31,7 @@ class PracticeGenerator(NoteGenerator):
             "Write in an objective, third-person, informational style. Do not "
             "reference the author or use first-person voice.\n\n"
             "Output ONLY the markdown body (no YAML frontmatter, no top-level # title heading)."
-        )
+        ) + self._math_formatting_instructions() + self._vault_linking_instructions()
 
     def _user_prompt(self, content: str, title: str, url: str) -> str:
         # Used as fallback for chunk-based generation
@@ -153,7 +153,7 @@ class PracticeGenerator(NoteGenerator):
             "  > [!answer]- Click to reveal answer\n"
             "  > **Answer:** The answer with explanation\n\n"
             "- Do NOT include YAML frontmatter or a top-level # title heading"
-        )
+        ) + self._math_formatting_instructions() + self._vault_linking_instructions()
 
     def _section_user_prompt(
         self,
