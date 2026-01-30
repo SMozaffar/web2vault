@@ -14,7 +14,19 @@ Notes include YAML frontmatter (title, source URL, tags, date) and wikilinks for
 
 ### Vault-Aware Cross-Linking
 
-Before generating notes, web2vault scans your existing vault for `.md` files and extracts their titles and topics. This context is injected into LLM prompts so the generated notes automatically create `[[wikilinks]]` to related existing notes. The more notes in your vault, the more interconnected new notes become -- no manual linking required.
+Before generating notes, web2vault scans your existing vault for `.md` files and extracts their folder paths, filenames, and topic headings. This context is injected into LLM prompts so generated notes can create wikilinks to related existing notes.
+
+Wikilinks use Obsidian's proper path format:
+```
+[[Folder Name/Note Name|Display Text]]
+```
+
+For example, if your vault contains notes from a previous run about "Attention Is All You Need", new notes about transformers will automatically link to them:
+```
+[[Attention Is All You Need/Deep Dive|Deep Dive]]
+```
+
+The LLM is instructed to **only** create wikilinks to notes that actually exist in your vault -- it won't invent links to non-existent pages.
 
 ### Math Rendering
 
@@ -95,7 +107,7 @@ web2vault https://example.com \
 
 ## Roadmap
 
-- [x] **Vault-aware cross-linking** -- Scans existing vault notes and injects their titles/topics into LLM prompts so generated notes create `[[wikilinks]]` to related existing notes automatically.
+- [x] **Vault-aware cross-linking** -- Scans existing vault notes and injects their paths/topics into LLM prompts. Generated notes create wikilinks using Obsidian's `[[folder/file|display]]` format, linking only to notes that actually exist.
 - [x] **Math rendering** -- Obsidian-compatible LaTeX formatting (`$...$` inline, `$$...$$` display) is enforced via prompt instructions across all generators.
 - [x] **Smart tagging** -- Notes are tagged with a subject-derived tag in addition to `web2vault` and the note type.
 - [ ] **GitHub repo ingestion** -- Clone a repo and convert its files into text input for note generation. Includes research into minimizing input token usage (e.g., filtering files, summarizing boilerplate).

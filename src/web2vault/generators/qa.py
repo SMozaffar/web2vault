@@ -29,7 +29,7 @@ class QAGenerator(NoteGenerator):
             "first-person voice, reference the author, or mirror the perspective "
             "of the original source. Present information as factual documentation.\n\n"
             "Output ONLY the markdown body (no YAML frontmatter, no top-level # title "
-            "heading). Use [[wikilinks]] in answers when referencing key concepts."
+            "heading)."
         ) + self._math_formatting_instructions() + self._vault_linking_instructions()
 
     def _user_prompt(self, content: str, title: str, url: str) -> str:
@@ -44,7 +44,6 @@ class QAGenerator(NoteGenerator):
             "  **Q: [question]**\n\n"
             "  A: [detailed, multi-sentence answer with full explanation]\n\n"
             "- Answers should be thorough — typically 2-5 sentences with context and explanation\n"
-            "- Use [[wikilinks]] in answers for important concepts, terms, and people\n"
             "- Organize by topic using ## headings for each topic group\n"
             "- Progress from foundational to more advanced questions within each group\n"
             "- Do NOT include YAML frontmatter or a top-level # title heading\n\n"
@@ -141,7 +140,6 @@ class QAGenerator(NoteGenerator):
             "- Write 5-10 detailed Q&A pairs for this topic\n"
             "- Format: **Q: [question]**\\n\\nA: [detailed answer]\n"
             "- Answers should be 2-5 sentences with full explanations\n"
-            "- Use [[wikilinks]] for important concepts\n"
             "- Mix factual, conceptual, and analytical questions\n"
             "- Do NOT include YAML frontmatter or a top-level # title heading"
         ) + self._math_formatting_instructions() + self._vault_linking_instructions()

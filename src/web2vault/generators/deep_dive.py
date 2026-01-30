@@ -31,8 +31,7 @@ class DeepDiveGenerator(NoteGenerator):
             "the perspective of the original source. Present all information as "
             "factual, standalone documentation.\n\n"
             "Output ONLY the markdown body (no YAML frontmatter, "
-            "no top-level # title heading). Use [[wikilinks]] for cross-references "
-            "to concepts that could be their own note."
+            "no top-level # title heading). "
         ) + self._math_formatting_instructions() + self._vault_linking_instructions()
 
     def _user_prompt(self, content: str, title: str, url: str) -> str:
@@ -45,7 +44,6 @@ class DeepDiveGenerator(NoteGenerator):
             "- Explain each concept thoroughly with full context, background, and connections\n"
             "- Include specific details: names, dates, numbers, examples, and evidence\n"
             "- Draw connections between different topics and ideas\n"
-            "- Use [[wikilinks]] for important terms, people, and related concepts\n"
             "- Use bullet points, numbered lists, and block quotes where appropriate\n"
             "- Include a ## Connections & Implications section at the end\n"
             "- Be EXHAUSTIVE — leave nothing out. This should be a complete reference\n"
@@ -157,7 +155,6 @@ class DeepDiveGenerator(NoteGenerator):
             "Rules:\n"
             "- Write comprehensive prose with full explanations\n"
             "- Include specific details: names, dates, numbers, examples\n"
-            "- Use [[wikilinks]] for important terms and concepts\n"
             "- Use ### subheadings to organize content within the section\n"
             "- Use bullet points, numbered lists, and block quotes where appropriate\n"
             "- Be thorough — do not summarize or abbreviate\n"

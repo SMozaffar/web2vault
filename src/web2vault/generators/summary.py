@@ -24,7 +24,7 @@ class SummaryGenerator(NoteGenerator):
             "the perspective of the original source. Present all information as "
             "factual, standalone documentation.\n\n"
             "Output ONLY the markdown body (no YAML frontmatter, no top-level # title "
-            "heading). Use [[wikilinks]] when referencing concepts that could be their own note."
+            "heading)."
         ) + self._math_formatting_instructions() + self._vault_linking_instructions()
 
     def _user_prompt(self, content: str, title: str, url: str) -> str:
@@ -35,7 +35,6 @@ class SummaryGenerator(NoteGenerator):
             "- Use ## headings to organize the summary into logical sections\n"
             "- Each section should have multiple well-developed paragraphs\n"
             "- Include specific details, examples, and key facts — not just vague generalities\n"
-            "- Use [[wikilinks]] for important concepts, people, terms, and related topics\n"
             "- Write in clear, accessible language suitable for study notes\n"
             "- End with a '## Key Takeaways' section with 8-15 bullet points covering "
             "the most important insights\n"

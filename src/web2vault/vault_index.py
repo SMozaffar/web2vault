@@ -8,6 +8,7 @@ so generators can create [[wikilinks]] to existing notes.
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Optional
 
 
 @dataclass
@@ -16,14 +17,22 @@ class VaultNote:
 
     title: str
     folder: str
+    filename: str  # filename without .md extension
     headings: list[str] = field(default_factory=list)
     tags: list[str] = field(default_factory=list)
+
+    @property
+    def wikilink_path(self) -> str:
+        """Return the path for use in [[wikilinks]]."""
+        if self.folder == ".":
+            return self.filename
+        return f"{self.folder}/{self.filename}"
 
 
 class VaultIndex:
     """Index of existing vault notes for cross-linking."""
 
-    def __init__(self, notes: list[VaultNote] | None = None):
+    def __init__(self, notes: Optional[list[VaultNote]] = None):
         self.notes: list[VaultNote] = notes or []
 
     @classmethod
@@ -71,9 +80,10 @@ class VaultIndex:
 
         lines = []
         for note in self.notes:
-            line = f"- [[{note.title}]]"
+            # Use correct Obsidian wikilink format: [[path|display]]
+            line = f"- [[{note.wikilink_path}|{note.filename}]]"
             if note.headings:
-                topics = ", ".join(note.headings)
+                topics = ", ".join(note.headings[:5])  # Limit to first 5 headings
                 line += f" — Topics: {topics}"
             lines.append(line)
 
@@ -83,7 +93,7 @@ class VaultIndex:
         return len(self.notes)
 
 
-def _parse_note(md_file: Path, vault_root: Path) -> VaultNote | None:
+def _parse_note(md_file: Path, vault_root: Path) -> Optional[VaultNote]:
     """Parse a single markdown file into a VaultNote.
 
     Extracts title from YAML frontmatter or first # heading (falls back to
@@ -142,6 +152,7 @@ def _parse_note(md_file: Path, vault_root: Path) -> VaultNote | None:
     return VaultNote(
         title=title,
         folder=folder,
+        filename=md_file.stem,
         headings=headings,
         tags=tags,
     )

@@ -32,9 +32,14 @@ class NoteGenerator(ABC):
         if not self._vault_context:
             return ""
         return (
-            "\n\nEXISTING VAULT NOTES — Link to these using [[Note Title]] where relevant:\n"
-            f"{self._vault_context}\n"
-            "Only link when genuinely relevant. Do not force connections."
+            "\n\nEXISTING VAULT NOTES — You may link to these notes where relevant:\n"
+            f"{self._vault_context}\n\n"
+            "WIKILINK RULES (STRICT):\n"
+            "- Use EXACTLY the format shown: [[path|display]] — copy the link exactly as listed above\n"
+            "- ONLY create [[wikilinks]] to notes that appear in the list above\n"
+            "- Do NOT invent or guess wikilinks to notes that don't exist\n"
+            "- Do NOT use [[wikilinks]] for general concepts unless they match an existing note\n"
+            "- Only link when genuinely relevant. Do not force connections."
         )
 
     def _math_formatting_instructions(self) -> str:
